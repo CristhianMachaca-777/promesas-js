@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ejercicio 04 - PokeAPI</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Ejercicio 04</h1>
+      <p>Buscador de Pokémon (PokeAPI)</p>
+    </header>
+
+    <nav>
+      <a href="index.html">← Inicio</a>
+      <a href="ejercicio1.html">Ejercicio 1</a>
+      <a href="ejercicio2.html">Ejercicio 2</a>
+      <a href="ejercicio3.html">Ejercicio 3</a>
+      <a href="ejercicio4.html" class="active">Ejercicio 4</a>
+    </nav>
+
+    <main class="card">
+      <h2>Consultar Pokémon por Nombre o ID</h2>
+      <div class="input-group">
+        <input
+          type="text"
+          id="pokemonInput"
+          placeholder="Ejemplo: pikachu o 25"
+        />
+        <button id="btnBuscar">Buscar</button>
+      </div>
+      <div id="pokemonResult" class="result-box">
+        Ingrese el nombre o ID de un Pokémon.
+      </div>
+    </main>
+
+    <script>
+      document
+        .getElementById("btnBuscar")
+        .addEventListener("click", async () => {
+          const query = document
+            .getElementById("pokemonInput")
+            .value.trim()
+            .toLowerCase();
+          const resultDiv = document.getElementById("pokemonResult");
+
+          if (!query) {
+            resultDiv.innerHTML = `<p class="error">Por favor, ingrese un nombre o ID.</p>`;
+            return;
+          }
+
+          try {
+            resultDiv.innerHTML = `<p>Cargando información...</p>`;
+            const response = await fetch(
+              `https://pokeapi.co/api/v2/pokemon/${query}`,
+            );
+
+            if (!response.ok) {
+              throw new Error("Pokémon no encontrado.");
+            }
+
+            const data = await response.json();
+
+            resultDiv.innerHTML = `
+                    <p><strong>Nombre:</strong> ${data.name.toUpperCase()}</p>
+                    <p><strong>ID:</strong> ${data.id}</p>
+                    <p><strong>Tipo:</strong> ${data.types.map((t) => t.type.name).join(", ")}</p>
+                    <img src="${data.sprites.front_default}" alt="${data.name}">
+                `;
+          } catch (error) {
+            resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+          }
+        });
+    </script>
+  </body>
+</html>
